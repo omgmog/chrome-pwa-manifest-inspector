@@ -2,15 +2,69 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="uikit.min.css">
   <style>
-    body {
-      min-width: 300px;
-      min-height: 100px;
+    html {
+      width: 320px;
+      height: 489px;
+    }
+    html, body {
+      overflow: hidden;
+      overflow-y: auto;
+    }
+    .header {
+      background-color: #7441C2;
+      padding: 15px;
+      line-height: 1;
+      color: #fff;
+    }
+    .uk-container {
+      padding: 15px;
+    }
+    .homescreen {
+      background-image: url(homescreen.jpg);
+      width: 320px;
+      height: 320px;
+      background-size: cover;
+      margin: -15px;
+
+    }
+    .icon {
+      text-align: center;
+      padding: 32px;
+      line-height: 1;
+    }
+    .icon img {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+    }
+    .icon span {
+      display: block;
+      color: #fff;
+      text-shadow: 0 1px 3px #000;
+      font-weight: bold;
+      font-size: 12px;
     }
   </style>
 </head>
-<body>
-  <div class="out"></div>
+<body class="uk-animation-fade">
+  <div class="header uk-text-large">PWA Manifest Inspector</div>
+  <div class="uk-container">
+    <ul class="uk-flex-center uk-tab">
+      <li class="tab-overview uk-active" data-target=".overview"><a href="#">Overview</a></li>
+      <li class="tab-homescreen" data-target=".homescreen"><a href="#">Homescreen</a></li>
+    </ul>
+    <ul class="uk-panel uk-switcher">
+      <li class="overview uk-active"></li>
+      <li class="homescreen">
+        <div class="icon">
+          <img src="" alt="">
+          <span></span>
+        </div>
+      </li>
+    </ul>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>

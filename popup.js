@@ -1,6 +1,8 @@
 (function() {
   'use strict';
-  let out = document.querySelector('.out');
+
+  let out = document.querySelector('.overview');
+  var home = document.querySelector('.homescreen');
   let schema = {
     title: "JSON schema for Web Application manifest files",
     $schema: "http://json-schema.org/draft-04/schema#",
@@ -202,15 +204,18 @@
     }
   };
 
-  function c(el, text) {
+  function c(el) {
     let node = document.createElement(el);
-    if (text) node.innerHTML = text;
     return node;
+  }
+  function t(el,text) {
+    el.innerText = text;
+    return el;
   }
 
   function item(key, manifest) {
-    let item = c('li');
-    let label = c('strong', `${key}: `);
+    let item = [];
+    let label = t(c('dt'), `${key}: `);
     label.title = schema.properties[key].description;
     let value;
     let type = schema.properties[key].type;
@@ -222,24 +227,26 @@
     if (hasType) {
       switch (type) {
         case 'string':
-          value = c('span', manifest[key]);
-          item.append(label, value);
+          value = t(c('dd'), manifest[key]);
           if (manifest[key].indexOf('#') === 0) {
             let colorWidget = c('input');
             colorWidget.type = 'color';
             colorWidget.value = manifest[key];
             colorWidget.disabled = true;
             colorWidget.style.width = '20px';
-            item.append(colorWidget);
+            value.append(colorWidget);
           }
+          item.push(label, value);
         break;
         case 'array':
-          item.append(label, c('span', manifest[key].length));
-          let sublist = c('ul');
+          let totalItems = manifest[key].length;
+          label.append(t(c('span'), totalItems));
+          item.push(label);
+          let sublist = c('dd');
           manifest[key].forEach((listitem) => {
-            sublist.append(c('li', JSON.stringify(listitem)));
+            sublist.append(t(c('div'), JSON.stringify(listitem)));
           });
-          item.append(sublist);
+          item.push(sublist);
         break;
       }
       // normal things
@@ -253,7 +260,18 @@
       }
     }
     return item;
-  };
+  }
+
+  function truncate(string, length){
+    return string.length > length ? string.substring(0,length)+'…' : string;
+  }
+  function prefixURL(string, prefix) {
+    prefix = prefix.replace('/manifest.json', ''); // hacky
+    if (string.charAt(0) !== '/') {
+      string = '/' + string;
+    }
+    return prefix + string;
+  }
 
   function getManifestURL() {
     return document.head.querySelector('link[rel="manifest"]').href;
@@ -269,20 +287,55 @@
           let manifest = JSON.parse(xhr.responseText);
           let members = schema.properties;
           let memberskeys = Object.keys(members);
-          let list = c('ul');
+          let list = c('dl');
+          list.classList.add('uk-description-list');
 
           memberskeys.forEach((key, i) => {
             if (manifest[key]) {
               // console.log(`${key} present!`);
-              list.append(item(key, manifest));
+              item(key, manifest).forEach((item) => list.append(item));
             }
           });
 
           out.append(list);
+
+          if (manifest.icons.length) {
+            let target = home.querySelector('.icon');
+            let targetImg = target.querySelector('img');
+            let targetLabel = target.querySelector('span');
+            let imgSrc = manifest.icons[0].src;
+            let labelText = manifest.short_name ? manifest.short_name : manifest.name;
+
+            targetImg.src = prefixURL(imgSrc, url);
+            targetLabel.innerText = truncate(labelText, 11);
+          }
+
+          document.querySelector('html').style.height = window.getComputedStyle(document.body).height;
+
+          let tabs = [document.querySelector('.tab-overview'), document.querySelector('.tab-homescreen')];
+          tabs.forEach((tab) => {
+            tab.addEventListener('click', function (e) {
+              console.log(tab);
+              let target = document.querySelector(tab.dataset.target);
+              let activeEls = document.querySelectorAll('.uk-active');
+              for (let i=0; i<activeEls.length; i++) {
+                activeEls[i].classList.remove('uk-active');
+              }
+              tab.classList.add('uk-active');
+              target.classList.add('uk-active');
+
+              document.querySelector('html').style.height = window.getComputedStyle(document.body).height;
+            }, false);
+          });
+          // tabNodes.addEventListener('click', (e) => {
+          //   console.log('click');
+          // }, {capture:true});
+
         } else {
           // loaded, but can't find file
           if (xhr.status == 404) {
-            out.innerText = "Couldn't download manifest!";
+            out.append(t(c('p'), 'Couldn\'t download manifest!'));
+            document.querySelector('.uk-tab').remove();
           }
         }
       }
@@ -295,7 +348,8 @@
       if (results[0]) {
         grabManifestContents(results[0]);
       } else {
-        out.append(c('h2', 'No manifest found!'));
+        out.append(t(c('p'), 'No manifest found!'));
+        document.querySelector('.uk-tab').remove();
       }
     }
   );
