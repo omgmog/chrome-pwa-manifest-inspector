@@ -266,13 +266,20 @@
     return string.length > length ? string.substring(0,length)+'…' : string;
   }
   function prefixURL(string, prefix) {
+    // make sure string doesn't already start with a full url prefix
+    if (string.indexOf('http') !== 0) {
     // remove last fragment from url
     prefix = prefix.split('/');
     prefix.pop();
     prefix = prefix.join('/');
+
     if (string.charAt(0) !== '/') {
       string = '/' + string;
     }
+    } else {
+      prefix = '';
+    }
+
     return prefix + string;
   }
 
