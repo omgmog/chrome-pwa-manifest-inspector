@@ -233,7 +233,6 @@
             colorWidget.type = 'color';
             colorWidget.value = manifest[key];
             colorWidget.disabled = true;
-            colorWidget.style.width = '20px';
             value.append(colorWidget);
           }
           item.push(label, value);

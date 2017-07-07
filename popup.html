@@ -10,24 +10,24 @@
     }
     html, body {
       overflow: hidden;
-      overflow-y: auto;
-    }
-    .header {
-      background-color: #7441C2;
-      padding: 15px;
-      line-height: 1;
-      color: #fff;
     }
     .uk-container {
+      padding: 0;
+    }
+    .overview {
       padding: 15px;
+      overflow: hidden;
+      overflow-y: auto;
+      height: 400px;
     }
     .homescreen {
       background-image: url(homescreen.jpg);
       width: 320px;
-      height: 320px;
+      height: 400px;
       background-size: cover;
-      margin: -15px;
-
+    }
+    .uk-tab {
+      margin-bottom: 0;
     }
     .icon {
       text-align: center;
@@ -46,10 +46,13 @@
       font-weight: bold;
       font-size: 12px;
     }
+    input[type=color] {
+      width: 20px;
+      margin-left: 5px;
+    }
   </style>
 </head>
 <body class="uk-animation-fade">
-  <div class="header uk-text-large">PWA Manifest Inspector</div>
   <div class="uk-container">
     <ul class="uk-flex-center uk-tab">
       <li class="tab-overview uk-active" data-target=".overview"><a href="#">Overview</a></li>
