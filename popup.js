@@ -266,7 +266,10 @@
     return string.length > length ? string.substring(0,length)+'…' : string;
   }
   function prefixURL(string, prefix) {
-    prefix = prefix.replace('/manifest.json', ''); // hacky
+    // remove last fragment from url
+    prefix = prefix.split('/');
+    prefix.pop();
+    prefix = prefix.join('/');
     if (string.charAt(0) !== '/') {
       string = '/' + string;
     }
