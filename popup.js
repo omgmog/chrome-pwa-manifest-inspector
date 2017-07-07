@@ -243,7 +243,8 @@
           item.push(label);
           let sublist = c('dd');
           manifest[key].forEach((listitem) => {
-            sublist.append(t(c('div'), JSON.stringify(listitem)));
+            sublist.append(t(c('div'), listitem.sizes));
+            sublist.append(t(c('div'), `- ${listitem.src}`));
           });
           item.push(sublist);
         break;
